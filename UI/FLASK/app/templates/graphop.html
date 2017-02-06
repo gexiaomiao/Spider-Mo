@@ -1,0 +1,176 @@
+{% extends "mybase.html" %} <!--this means that you are extending the base tempate -->
+{% block graphop %} <!-- this is the name of the block below --> 
+<!-- START SIGMA IMPORTS -->
+<script src="static/src/sigma.core.js"></script>
+<script src="static/src/conrad.js"></script>
+<script src="static/src/utils/sigma.utils.js"></script>
+<script src="static/src/utils/sigma.polyfills.js"></script>
+<script src="static/src/sigma.settings.js"></script>
+<script src="static/src/classes/sigma.classes.dispatcher.js"></script>
+<script src="static/src/classes/sigma.classes.configurable.js"></script>
+<script src="static/src/classes/sigma.classes.graph.js"></script>
+<script src="static/src/classes/sigma.classes.camera.js"></script>
+<script src="static/src/classes/sigma.classes.quad.js"></script>
+<script src="static/src/classes/sigma.classes.edgequad.js"></script>
+<script src="static/src/captors/sigma.captors.mouse.js"></script>
+<script src="static/src/captors/sigma.captors.touch.js"></script>
+<script src="static/src/renderers/sigma.renderers.canvas.js"></script>
+<script src="static/src/renderers/sigma.renderers.webgl.js"></script>
+<script src="static/src/renderers/sigma.renderers.svg.js"></script>
+<script src="static/src/renderers/sigma.renderers.def.js"></script>
+<script src="static/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="static/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="static/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="static/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="static/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="static/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="static/src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="static/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="static/src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="static/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="static/src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="static/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="static/src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="static/src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="static/src/misc/sigma.misc.animation.js"></script>
+<script src="static/src/misc/sigma.misc.bindEvents.js"></script>
+<script src="static/src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="static/src/misc/sigma.misc.drawHovers.js"></script>
+<!-- END SIGMA IMPORTS -->
+<script src="static/plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
+<script src="static/plugins/sigma.layout.forceAtlas2/worker.js"></script>
+<script src="static/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
+<script src="static/plugins/sigma.renderers.parallelEdges/utils.js"></script>
+<script src="static/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.curve.js"></script>
+<script src="static/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="static/plugins/sigma.renderers.parallelEdges/sigma.canvas.edgehovers.curve.js"></script>
+<script src="static/plugins/sigma.renderers.parallelEdges/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="static/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
+<script src="static/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
+<script src="static/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
+
+  <div id="graph-container" style="width:900px; height: 450px; margin:30px auto"></div>
+<div class="container">
+     <div class="starter-template">
+       <div class="row" style="height:100vh;">
+               <div class="col-md-1 col-md-offset-1">
+                   <table class="table">
+                     <thead>
+                       <tr align="left">
+                         <th>searching</th>
+                         <th>time from</th>
+			 <th>number nodes</th>
+                         <th>number edges</th>
+                         <th>density</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {% for val in [output] %}
+                       <tr align="left">
+                         <td>{{val.words}}</td>
+			 <td>{{val.time_from}}</td>
+                         <td>{{val.numnodes}}</td>
+                         <td>{{val.numedges}}</td>
+                         <td>{{val.densityval}}</td>
+                       </tr>
+                       {% endfor %}
+                     </tbody>
+                   </table>
+               </div>
+       </div>
+     </div>
+   </div>
+<div class="container">
+     <div class="starter-template">
+       <div class="row" style="height:100vh;">
+               <div class="col-md-10 col-md-offset-1">
+                   <table class="table">
+                     <thead>
+                       <tr align="left">
+                         <th>actor id</th>
+                         <th>target id</th>
+                         <th>time sended</th>
+                         <th>message</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {% for val in output.example %}
+                       <tr align="left">
+                         <td>{{val.actor_id}}</td>
+                         <td>{{val.target_id}}</td>
+                         <td>{{val.time_sended}}</td>
+                         <td>{{val.message}}</td>
+                       </tr>
+                       {% endfor %}
+                     </tbody>
+                   </table>
+               </div>
+       </div>
+     </div>
+   </div>
+
+<script>
+/**
+ * This is a basic example on how to instantiate sigma. A random graph is
+ * generated and stored in the "graph" variable, and then sigma is instantiated
+ * directly with the graph.
+ *
+ * The simple instance of sigma is enough to make it render the graph on the on
+ * the screen, since the graph is given directly to the constructor.
+ */
+    var g = {
+        nodes: [],
+        edges: []
+    };
+
+   s = new sigma({
+   graph: g,
+   container: 'graph-container',
+   renderer: {
+    container: document.getElementById('graph-container'),
+    type: 'canvas'
+   }
+   });
+sigma.parsers.gexf(
+        'static/dogg.gexf',
+	s,
+	function() {
+           // Refresh the display:
+            // ForceAtlas Layout
+            var i,
+                    nodes = s.graph.nodes(),
+                    len = nodes.length,
+		    edges = s.graph.edges(),
+		    lenedge = edges.length;
+	    for (i = 0; i < lenedge; i++) {
+		edges[i].size = Math.random();
+		//edges[i].type =  'curvedArrow';
+	    }
+
+            for (i = 0; i < len; i++) {
+                nodes[i].x = Math.random();
+                nodes[i].y = Math.random();
+                nodes[i].size = s.graph.degree(nodes[i].id);
+                nodes[i].color = nodes[i].center ? '#33f' : '#33f';
+            }
+	    filter = new sigma.plugins.filter(s);
+       	    filter.undo('min-degree').nodesBy(function(n) { return this.degree(n.id) >= 1;}, 'min-degree').apply();
+	    s.startForceAtlas2({worker: true, gravity :2 ,slowDown :10, barnesHutOptimize: true});
+            s.refresh();
+
+	}
+        
+       );      
+</script>
+{% endblock %}
