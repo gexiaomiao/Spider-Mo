@@ -5,11 +5,11 @@ import time
 from elasticsearch import Elasticsearch
 
 # Set the configuration for Elasticsearch 
-es =  Elasticsearch(['52.35.1.180'], http_auth=('elastic', 'changeme'), verify_certs=False)
+es =  Elasticsearch(['es_ip'], http_auth=('elastic', 'changeme'), verify_certs=False)
 
-ES_NODES = 'ec2-52-35-1-180.us-west-2.compute.amazonaws.com'
+ES_NODES = 'ec2.compute.amazonaws.com'
 
-ES_INDEX = 'test_venmo_6'
+ES_INDEX = 'venmo_data'
 
 ES_TYPE = 'inputs'
 
@@ -27,7 +27,7 @@ if not es.indices.exists(ES_INDEX):
 
 
 # Set the configuration for Spark
-conf = SparkConf().setAppName("ExperimentStats").setMaster("spark://ip-172-31-3-4:7077")
+conf = SparkConf().setAppName("ExperimentStats").setMaster("spark://spark_cluster_ip:7077")
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
