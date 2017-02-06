@@ -13,7 +13,7 @@ from networkx.readwrite import json_graph
 
 ##setting up connections to elasticsearch	
 
-hosts=["ec2-52-35-1-180.us-west-2.compute.amazonaws.com"]
+hosts=["ec2.compute.amazonaws.com"]
 es = Elasticsearch(
        	    		hosts,
             		port=9200,
