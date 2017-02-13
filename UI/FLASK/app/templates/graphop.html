@@ -60,16 +60,150 @@
 <script src="static/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
 <script src="static/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
 
-  <div id="graph-container" style="width:900px; height: 450px; margin:30px auto"></div>
-<div class="container">
-     <div class="starter-template">
-       <div class="row" style="height:100vh;">
-               <div class="col-md-1 col-md-offset-1">
-                   <table class="table">
+
+<div class = "container">
+<div class="row">
+<div class="col-md-10 col-md-offset-1">
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+</style>
+<svg id="outfigure" width="960" height="600"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+
+var svg = d3.select("#outfigure"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", d3.forceManyBody(-300))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("y", d3.forceY(0))
+    .force("x", d3.forceX(0));
+
+
+
+d3.json("static/D3_graph_data.json", function(error, graph) {
+  if (error) throw error;
+
+  var link = svg.append("g")
+      .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+
+
+  var _node = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll("circle")
+    .data(graph.nodes, function(d) { return d.id; });
+
+
+  var node = _node
+    .enter().append("circle")
+      .attr("r", function(d){return 1.5+1.5*Math.sqrt(d.size);})
+      .attr("fill", function(d) { return color(5+d.group); })
+      .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
+
+
+_node.exit().remove()
+  
+node.append("title")
+      .text(function(d) { return d.id; });
+
+
+//var labels =  node.append("text")
+  //    .attr("dx", 12)
+   //   .attr("dy", ".35em")
+   //   .text("dogg");
+
+
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("link")
+      .links(graph.links);
+
+
+  function ticked() {
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+  }
+});
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+</script>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class = "container">
+<div class="row">
+
+               <div class="col-md-10 col-md-offset-1">
+                   <table class="table" >
                      <thead>
                        <tr align="left">
                          <th>searching</th>
                          <th>time from</th>
+			 <th>time end</th>
 			 <th>number nodes</th>
                          <th>number edges</th>
                          <th>density</th>
@@ -80,7 +214,8 @@
                        <tr align="left">
                          <td>{{val.words}}</td>
 			 <td>{{val.time_from}}</td>
-                         <td>{{val.numnodes}}</td>
+                         <td>{{val.time_end}}</td>
+			 <td>{{val.numnodes}}</td>
                          <td>{{val.numedges}}</td>
                          <td>{{val.densityval}}</td>
                        </tr>
@@ -89,13 +224,215 @@
                    </table>
                </div>
        </div>
-     </div>
-   </div>
+
+</div>
+
 <div class="container">
      <div class="starter-template">
-       <div class="row" style="height:100vh;">
-               <div class="col-md-10 col-md-offset-1">
+       <div class="row" style="height:auto;">
+               <div class="col-md-6 col-md-offset-3">
                    <table class="table">
+                     <thead>
+                       <tr align="left">
+                         <th>User with Most degree</th>
+                         <th>degree</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {% for val in output.top_degree %}
+                       <tr align="left">
+                         <td>{{val.user_id}}</td>
+			 <td>{{val.degrees}}</td>
+                       </tr>
+                       {% endfor %}
+                     </tbody>
+                   </table>
+               </div>
+       </div>
+     </div>
+   </div>
+
+<!DOCTYPE html>
+<div class="container">
+<div class="starter-template">
+
+<style>
+
+.bar rect {
+  fill: purple;
+}
+
+.bar text {
+  fill: #ccc;
+  font: 10px sans-serif;
+}
+
+</style>
+
+
+<div class="row" style="height:auto;">
+         <div class="col-md-4 col-md-offset-4">
+		<label style="font-size:20px;">Degree of User</label>
+	</div>
+</div>
+
+
+
+
+<svg id="supeng" width="960" height="400"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var data = {{output.all_degrees}};
+
+var bin_limit =50;
+
+var formatCount = d3.format(",.0f");
+
+var svg = d3.select("#supeng"),
+    margin = {top: 10, right: 30, bottom: 30, left: 30},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleLinear()
+    .domain([Math.min.apply(null,data),(Math.max.apply(null,data)+1)])
+    .rangeRound([0, width]);
+
+var bins = d3.histogram()
+    .domain(x.domain())
+    .thresholds(x.ticks(Math.min(bin_limit,Math.max.apply(null,data))))
+    //.thresholds(Math.min(100,Math.max.apply(null,data)))
+    (data);
+
+var y = d3.scaleLog()
+    .domain([0.5, d3.max(bins, function(d) { return d.length; })])
+    .range([height,0]);
+
+var bar = g.selectAll(".bar")
+  .data(bins)
+  .enter().append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d) { return    "translate(" + (x(d.x0))+ "," + y(Math.max(d.length,0.1)) + ")" ; });
+
+bar.append("rect")
+    .attr("x", 1)
+    .attr("width", x(bins[0].x1) - x(bins[0].x0) -1   )
+    .attr("height", function(d) { return height - y(d.length); });
+
+bar.append("text")
+    .attr("dy", ".75em")
+    .attr("y", 6)
+    .attr("x", (x(bins[0].x1) - x(bins[0].x0))/2 )
+    .attr("text-anchor", "middle")
+    .text(function(d) { return  formatCount(d.length);  });
+
+//formatCount(d.length) > 999 ? (formatCount(d.length)/1000).toFixed(1)+'k' : formatCount(d.length) 
+
+g.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x)); 
+
+
+</script>
+
+
+
+</div>
+</div>
+
+
+
+
+<div class="container">
+<div class="starter-template">
+
+<style>
+
+.bar rect {
+  fill: steelblue;
+}
+
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+</style>
+
+<div class="row" style="height:auto;">
+         <div class="col-md-4 col-md-offset-4">
+		<label style="font-size:20px;">Community Size</label>
+	</div>
+</div>
+
+
+
+<svg id="benz" width="960" height="400"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var data = {{output.component}};
+
+var formatCount = d3.format(",.0f");
+
+var svg = d3.select("#benz"),
+    margin = {top: 10, right: 30, bottom: 30, left: 30},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleLinear()
+    .domain([Math.min.apply(null,data),Math.max.apply(null,data)+1])
+    .rangeRound([0, width]);
+
+var bins = d3.histogram()
+    .domain(x.domain())
+    .thresholds(x.ticks(Math.min(100,Math.max.apply(null,data)+1)))
+    (data);
+
+var y = d3.scaleLog()
+    .domain([0.5, d3.max(bins, function(d) { return d.length; })])
+    .range([height, 0]);
+
+var bar = g.selectAll(".bar")
+  .data(bins)
+  .enter().append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d) { return  "translate(" + x(d.x0)+ "," + y(Math.max(d.length,0.1)) + ")"  ; });
+//   .attr("transform", function(d) { return  "translate(" + (x(d.x0)-(x(bins[0].x1) - x(bins[0].x0))/2 )+ "," + y(Math.max(d.length,0.1)) + ")"  ; });
+
+
+
+bar.append("rect")
+    .attr("x", 1)
+    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+    .attr("height", function(d) { return height - y(d.length); });
+
+bar.append("text")
+    .attr("dy", ".75em")
+    .attr("y", 6)
+    .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return formatCount(d.length); });
+
+g.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+</script>
+
+</div>
+</div>
+
+
+<div class="container">
+     <div class="starter-template">
+       <div class="row" style="height:auto;">
+               <div class="col-md-10 col-md-offset-1">
+                   <table class="table" style="font-family:arial; font-size: 20pt;">
                      <thead>
                        <tr align="left">
                          <th>actor id</th>
@@ -158,15 +495,20 @@ sigma.parsers.gexf(
 		//edges[i].type =  'curvedArrow';
 	    }
 
+            
+	    //var filter_num = Math.log2(len/1000)
+
+ 	    var filter_num = 1	    
+ 
             for (i = 0; i < len; i++) {
                 nodes[i].x = Math.random();
                 nodes[i].y = Math.random();
                 nodes[i].size = s.graph.degree(nodes[i].id);
                 nodes[i].color = nodes[i].center ? '#33f' : '#33f';
             }
-	    filter = new sigma.plugins.filter(s);
-       	    filter.undo('min-degree').nodesBy(function(n) { return this.degree(n.id) >= 1;}, 'min-degree').apply();
-	    s.startForceAtlas2({worker: true, gravity :2 ,slowDown :10, barnesHutOptimize: true});
+	    //filter = new sigma.plugins.filter(s);
+       	    //filter.undo('min-degree').nodesBy(function(n) { return this.degree(n.id) >= filter_num;}, 'min-degree').apply();
+	    s.startForceAtlas2({worker: true,outboundAttractionDistribution : true});
             s.refresh();
 
 	}
