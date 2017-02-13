@@ -15,7 +15,6 @@ ES_TYPE = 'inputs'
 
 ES_RESOURCE = '/'.join([ES_INDEX,ES_TYPE])
 
-
 def create_es_index():
 	es_mapping = {"venmo_data":{"properties":{"actor_id":{"type":"string"},"target_id":{"type":"string"},"message":{"type":"string","fielddata": True },"time_sended":{"type":"date"}}}}
 	es_settings = {'number_of_shards':3, 'number_of_replicas': 2, 'refresh_interval': '1s', 'index.translog.flush_threshold_size': '1gb'}
@@ -23,6 +22,8 @@ def create_es_index():
 
 if not es.indices.exists(ES_INDEX):
 	create_es_index()
+
+es_conf = {'es.nodes': ES_NODES, 'es.resource': ES_RESOURCE, 'es.port' : '9200','es.net.http.auth.user':'elastic','es.net.http.auth.pass':'changeme'}
 
 
 
@@ -33,10 +34,11 @@ sqlContext = SQLContext(sc)
 
 
 # Read data from S3
-read_rdd  = sc.textFile("s3n://venmo-json/2017_01/*")
+read_rdd  = sc.textFile("s3n://venmo-json/*/*")
 
 
 
+# Function that do filtering and extract the actor_id, target_id, timestamp and message from raw data
 def get_actor_target(line):
 	field = json.loads(line)
 	actor_id = field['actor']['id']
@@ -52,9 +54,7 @@ def get_actor_target(line):
 	except:
 		return []
 
-
-es_conf = {'es.nodes': ES_NODES, 'es.resource': ES_RESOURCE, 'es.port' : '9200','es.net.http.auth.user':'elastic','es.net.http.auth.pass':'changeme'}
-
+# Distribute the map function to process the data and use API function 'saveAsNewAPIHadoopFile' to save the data to elasticsearch database.
 read_rdd.flatMap(get_actor_target).saveAsNewAPIHadoopFile(path='-', \
                                             outputFormatClass='org.elasticsearch.hadoop.mr.EsOutputFormat', \
                                             keyClass='org.apache.hadoop.io.NullWritable', \
