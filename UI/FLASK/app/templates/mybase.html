@@ -44,6 +44,11 @@
   <link href="static/css/emoji.css" rel="stylesheet">
   
 
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+
   </head>
 
   <body>
@@ -64,6 +69,8 @@
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
+	    <li><a href="slides">Slides</a></li>
+	
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -73,7 +80,7 @@
 
       <div class="starter-template">
         <h1>Spider-Mo</h1>
-	{% block search %}{% endblock %}
+	{% block emailid %}{% endblock %}
       </div>
 	{% block graphop %}{% endblock %}
 
