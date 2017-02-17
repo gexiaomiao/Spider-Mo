@@ -1,17 +1,40 @@
 import json, tarfile, os
 from pyspark import SparkConf, SparkContext
-from datetime import datetime
-import time
 from elasticsearch import Elasticsearch
+import yaml
+
+
+#load settings.yaml
+with open("../../yml_folder/spark.yaml", 'r') as spark_yaml:
+        try:
+                SPARK_settings = yaml.load(spark_yaml)
+
+        except yaml.YAMLError as exc:
+                print exc
+
+
+
+
+#load settings.yaml for elastic search
+with open("../../yml_folder/ES.yaml", 'r') as ES_yaml:
+        try:
+                ES_settings = yaml.load(ES_yaml)
+
+        except yaml.YAMLError as exc:
+                print exc
+
+
+
+
 
 # Set the configuration for Elasticsearch 
-es =  Elasticsearch(['es_ip'], http_auth=('elastic', 'changeme'), verify_certs=False)
+es =  Elasticsearch(ES_settings['ES_hosts'], http_auth=(ES_settings['ES_user'], ES_settings['ES_password']), verify_certs=False)
 
-ES_NODES = 'ec2.compute.amazonaws.com'
+ES_NODES = ES_settings['ES_hosts']
 
-ES_INDEX = 'venmo_data'
+ES_INDEX = ES_settings['ES_index']
 
-ES_TYPE = 'inputs'
+ES_TYPE = ES_settings['ES_type']
 
 ES_RESOURCE = '/'.join([ES_INDEX,ES_TYPE])
 
@@ -23,15 +46,13 @@ def create_es_index():
 if not es.indices.exists(ES_INDEX):
 	create_es_index()
 
-es_conf = {'es.nodes': ES_NODES, 'es.resource': ES_RESOURCE, 'es.port' : '9200','es.net.http.auth.user':'elastic','es.net.http.auth.pass':'changeme'}
+es_conf = {'es.nodes': ES_NODES, 'es.resource': ES_RESOURCE, 'es.port' : '9200','es.net.http.auth.user':ES_settings['ES_user'],'es.net.http.auth.pass': ES_settings['ES_password']}
 
 
 
 # Set the configuration for Spark
-conf = SparkConf().setAppName("ExperimentStats").setMaster("spark://spark_cluster_ip:7077")
+conf = SparkConf().setAppName("SparkProcessing").setMaster(SPARK_settings['master_node'])
 sc = SparkContext(conf=conf)
-sqlContext = SQLContext(sc)
-
 
 # Read data from S3
 read_rdd  = sc.textFile("s3n://venmo-json/*/*")
