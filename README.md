@@ -3,6 +3,8 @@ Spider-Mo
 Insight Data Engineering Project - Discover how topics connecting people
 
 
+Website : [Spider-Mo](http://spider-mo.site)
+Presentation : [Slides](https://docs.google.com/presentation/d/1Tazc5F2oVl9uBrQb_L0HOela_EKdrTV4ODCIGhZOvMI/pub?start=true&loop=false&delayms=3000#slide=id.p13)
 
 
 # Intro
