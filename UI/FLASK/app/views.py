@@ -1,6 +1,6 @@
 from flask import jsonify
 from app import app
-from flask import render_template,request
+from flask import render_template,request,redirect
 import json
 import os
 from random import randint
@@ -55,7 +55,13 @@ def search():
 
 @app.route('/slides')
 def slides():
-  return redirect("https://www.slideshare.net/secret/6XEsAow7tvRKs0")
+  return redirect("https://goo.gl/LY0h9n")
+
+
+
+@app.route('/github')
+def github():
+  return redirect("https://github.com/gexiaomiao/Spider-Mo")
 
 
 
