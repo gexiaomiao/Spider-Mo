@@ -13,7 +13,7 @@ Insight Data Engineering Project - Discover how topics connecting people
 
 Spider-Mo will tell you the top 10 communities that was built by coffee.
 
--	Most of the communities are build by the hub users, which reflect the topic social network is a scale-free network.
+-	Most of the communities are build by the hub users, which indicate the topic social network is a scale-free network.
 -	Few communities show the pattern of random graph.
 
 ![topcommunities](github/topcommunities.png)
