@@ -2,10 +2,30 @@ Spider-Mo
 ==========
 Insight Data Engineering Project - Discover how topics connecting people
 
+## Website : 
+[Spider-Mo](http://spider-mo.site)
 
-Website : [Spider-Mo](http://spider-mo.site)
-Presentation : [Slides](https://docs.google.com/presentation/d/1Tazc5F2oVl9uBrQb_L0HOela_EKdrTV4ODCIGhZOvMI/pub?start=true&loop=false&delayms=3000#slide=id.p13)
+## Presentation :
+[Slides](https://docs.google.com/presentation/d/1Tazc5F2oVl9uBrQb_L0HOela_EKdrTV4ODCIGhZOvMI/pub?start=true&loop=false&delayms=3000#slide=id.p13)
 
+## Examples :
+How coffee bring people together in recent 2 weeks?
+
+Spider-Mo will tell you the top 10 communities that was built by coffee.
+
+![topcommunities](github/topcommunities.png)
+
+
+
+----------
+
+
+![message](github/message.png)
+
+
+
+
+----------
 
 # Intro
 Similar to spiders building webs, different topics build different social network among us.
@@ -26,6 +46,8 @@ A payment represent a social interaction between two users and the message gives
 Bu analyze the message they send, we can know what topics make these two user get connected.
 
 #Pipeline
+
+
 Venmo data is read from S3 and processed by a spark running on 4 node cluster.
 The spark cluster do filtering, information extraction and write to an elasticsearch database.
 The front end is served with a flask app which query the data from elasticsearch based on the keyword and time range defined by the user.
@@ -33,7 +55,7 @@ The graphical calculation about the social network build by searching results is
 Finnally, the visualization is done by D3 and highchart.
 
  
+![pipeline](github/pipeline.png)
 
-#Instructions
 
 
