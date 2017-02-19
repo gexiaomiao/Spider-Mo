@@ -12,6 +12,24 @@ from datetime import datetime
 import yaml
 
 
+#define the funtion that build graph based on the edges information 
+def add_edge_json(G,edge_json):
+	for edge_add in edge_json:
+        	actor = edge_add['actor_id']
+                target = edge_add['target_id']
+               	# add new node when first see it 
+		if not G.has_node(actor):
+                       G.add_node(actor,{"name" : edge_add['actor_name']})
+                if not G.has_node(target):
+                       G.add_node(target,{"name" :  edge_add['target_name']})
+		# count the weight for edges
+                if G.has_edge(actor,target):
+                       G[actor][target]['weight'] += 1
+                else:
+                       G.add_edge(actor,target,weight =1)
+         return G
+
+
 
 
 #load settings.yaml
@@ -126,24 +144,6 @@ def search_post():
         # If the search result is none, reload the page.
 	if not jsonresponse:
                 return render_template("search.html")
-
-
-	#define the funtion that build graph based on the edges information 
-	def add_edge_json(G,edge_json):
-		for edge_add in edge_json:
-                        actor = edge_add['actor_id']
-                        target = edge_add['target_id']
-                       	# add new node when first see it 
-			if not G.has_node(actor):
-                                G.add_node(actor,{"name" : edge_add['actor_name']})
-                        if not G.has_node(target):
-                                G.add_node(target,{"name" :  edge_add['target_name']})
-			# count the weight for edges
-                        if G.has_edge(actor,target):
-                                G[actor][target]['weight'] += 1
-                        else:
-                                G.add_edge(actor,target,weight =1)
-                return G
 
 	#build the graph with edges from elasticsearch results 
 	FG=nx.Graph()
