@@ -9,16 +9,33 @@ Insight Data Engineering Project - Discover how topics connecting people
 [Slides](https://docs.google.com/presentation/d/1Tazc5F2oVl9uBrQb_L0HOela_EKdrTV4ODCIGhZOvMI/pub?start=true&loop=false&delayms=3000#slide=id.p13)
 
 ## Examples :
-How coffee bring people together in recent 2 weeks?
+**How coffee bring people together in recent 2 weeks?**
 
 Spider-Mo will tell you the top 10 communities that was built by coffee.
+
+-	Most of the communities are build by the hub users, which reflect the topic social network is a scale-free network.
+-	Few communities show the pattern of random graph.
 
 ![topcommunities](github/topcommunities.png)
 
 
+The users who most like to talk about coffee. They are the hub of the social network. If you are a coffee shop owner, they will be your most valuable customers.
 
-----------
 
+![topusers](github/topuser.png)
+
+The distribution of the user's degree and communities size.
+
+The exponentially decrease of the user's degree and communities size confirm that the social network built by coffee is a scale-free network.
+
+
+![chart](github/chart.png)
+
+The example messages that relate to coffee. Since more and more people like to use emoji in their message, handling the emoji during search is very important.
+
+With customized mapping and analyzer, the Elasticsearch can give a good search result about emoji.
+
+Thanks to the inspiration of [jolicode](https://github.com/jolicode/emoji-search) about emoji search. 
 
 ![message](github/message.png)
 
